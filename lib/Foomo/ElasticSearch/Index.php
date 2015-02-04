@@ -63,9 +63,11 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 			$this->indexName2 = $config->indexName . '-2';
 			$this->aliasName = $config->indexName . '-index';
 
+			$this->client = self::getClient($this->config);
+
 			// load indices
-			$elasticaIndex1 = self::getClient()->getIndex($this->indexName1);
-			$elasticaIndex2 = self::getClient()->getIndex($this->indexName2);
+			$elasticaIndex1 = $this->client->getIndex($this->indexName1);
+			$elasticaIndex2 = $this->client->getIndex($this->indexName2);
 
 			if ($elasticaIndex1 && $elasticaIndex1->exists()) {
 				$this->index = $elasticaIndex1;
@@ -109,24 +111,6 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 		$this->swapIndices();
 	}
 
-	/**
-	 * get elastica clients singleton
-	 * @return \Elastica\Client
-	 */
-	protected function getClient() {
-		if (is_null($this->client)) {
-			/**
-			 * @var \Foomo\ElasticSearch\DomainConfig $config
-			 */
-			$this->client = new \Elastica\Client(
-				[
-					'host' => $this->config->host,
-					'port' => $this->config->port,
-				]
-			);
-		}
-		return $this->client;
-	}
 
 	/**
 	 * swap indices after import
@@ -144,7 +128,7 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	 */
 	protected function createIndexAndMapping($indexName)
 	{
-		$index = self::getClient()->getIndex($indexName);
+		$index = self::getClient($this->config)->getIndex($indexName);
 		//create the index if not there
 		if (!$index || !$index->exists()) {
 			$index = $this->createIndex($indexName);
@@ -160,7 +144,7 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	 */
 	protected function createIndex($indexName)
 	{
-		$index = self::getClient()->getIndex($indexName);
+		$index = self::getClient($this->config)->getIndex($indexName);
 		$data = [
 			'number_of_shards' => $this->config->numberOfShards,
 			'number_of_replicas' => $this->config->numberOfReplicas,
@@ -197,7 +181,7 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	 */
 	protected function deleteSearchIndex($indexName)
 	{
-		$index = $this->getClient()->getIndex($indexName);
+		$index = self::getClient($this->config)->getIndex($indexName);
 		if ($index->exists()) {
 			$index->delete();
 		}
@@ -225,5 +209,20 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 		if (count($missingMandatoryFields) > 0) {
 			throw new Exception('missing mandatory fields or empty value' . implode(', ', $missingMandatoryFields));
 		}
+	}
+
+	/**
+	 * get client
+	 * @param DomainConfig $config
+	 * @return \Elastica\Client
+	 */
+	public static function getClient(\Foomo\ElasticSearch\DomainConfig $config) {
+		$client = new \Elastica\Client(
+			array(
+				'host' => $config->host,
+				'port' => $config->port
+			)
+		);
+		return $client;
 	}
 }

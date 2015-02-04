@@ -76,6 +76,7 @@ class DomainConfig extends AbstractConfig
 
 	public $analysis = [
 		'analyzer' => [
+
 			'search_analyzer' => [
 				'type' => 'custom',
 				'tokenizer' => 'standard',
@@ -291,7 +292,6 @@ class DomainConfig extends AbstractConfig
 			'analyzer' => 'french_index_analyzer'
 		],
 
-
 		'color_de' => [
 			'type' => 'string',
 			'include_in_all' => TRUE,
@@ -334,8 +334,8 @@ class DomainConfig extends AbstractConfig
 
 		'suggest_name_de' => [
 			'type' => 'completion',
-			"index_analyzer" => "german_index_analyzer",
-			"search_analyzer" => "search_analyzer",
+			"index_analyzer" => "simple",
+			"search_analyzer" => "simple",
 			"payloads" => true,
 			'context' => [
 				'gender' =>
@@ -349,8 +349,8 @@ class DomainConfig extends AbstractConfig
 
 		'suggest_name_en' => [
 			'type' => 'completion',
-			"index_analyzer" => "english_index_analyzer",
-			"search_analyzer" => "search_analyzer",
+			"index_analyzer" => "simple",
+			"search_analyzer" => "simple",
 			"payloads" => true,
 			'context' => [
 				'gender' =>
@@ -364,8 +364,8 @@ class DomainConfig extends AbstractConfig
 
 		'suggest_name_fr' => [
 			'type' => 'completion',
-			"index_analyzer" => "french_index_analyzer",
-			"search_analyzer" => "search_analyzer",
+			"index_analyzer" => "simple",
+			"search_analyzer" => "simple",
 			"payloads" => true,
 			'context' => [
 				'gender' =>
@@ -379,8 +379,8 @@ class DomainConfig extends AbstractConfig
 
 		'suggest_categories_de' => [
 			'type' => 'completion',
-			'index_analyzer' => 'german_index_analyzer',
-			'search_analyzer' => 'search_analyzer',
+			'index_analyzer' => 'simple',
+			'search_analyzer' => 'simple',
 			'payloads' => true,
 			'context' => [
 				'gender' =>
@@ -394,8 +394,8 @@ class DomainConfig extends AbstractConfig
 
 		'suggest_categories_en' => [
 			'type' => 'completion',
-			'index_analyzer' => 'english_index_analyzer',
-			'search_analyzer' => 'search_analyzer',
+			'index_analyzer' => 'simple',
+			'search_analyzer' => 'simple',
 			'payloads' => true,
 			'context' => [
 				'gender' =>
@@ -409,8 +409,8 @@ class DomainConfig extends AbstractConfig
 
 		'suggest_categories_fr' => [
 			'type' => 'completion',
-			'index_analyzer' => 'french_index_analyzer',
-			'search_analyzer' => 'search_analyzer',
+			'index_analyzer' => 'simple',
+			'search_analyzer' => 'simple',
 			'payloads' => true,
 			'context' => [
 				'gender' =>
@@ -424,8 +424,8 @@ class DomainConfig extends AbstractConfig
 
 		'suggest_color_de' => [
 			'type' => 'completion',
-			'index_analyzer' => 'german_index_analyzer',
-			'search_analyzer' => 'search_analyzer',
+			'index_analyzer' => 'simple',
+			'search_analyzer' => 'simple',
 			'payloads' => true,
 			'context' => [
 				'gender' =>
@@ -439,8 +439,8 @@ class DomainConfig extends AbstractConfig
 
 		'suggest_color_en' => [
 			'type' => 'completion',
-			'index_analyzer' => 'english_index_analyzer',
-			'search_analyzer' => 'search_analyzer',
+			'index_analyzer' => 'simple',
+			'search_analyzer' => 'simple',
 			'payloads' => true,
 			'context' => [
 				'gender' =>
@@ -454,8 +454,8 @@ class DomainConfig extends AbstractConfig
 
 		'suggest_color_fr' => [
 			'type' => 'completion',
-			'index_analyzer' => 'french_index_analyzer',
-			'search_analyzer' => 'search_analyzer',
+			'index_analyzer' => 'simple',
+			'search_analyzer' => 'simple',
 			'payloads' => true,
 			'context' => [
 				'gender' =>
@@ -467,10 +467,9 @@ class DomainConfig extends AbstractConfig
 			],
 		],
 
-
 		'suggest_de' => ['type' => "completion",
-			"index_analyzer" => "english_index_analyzer",
-			"search_analyzer" => "search_analyzer",
+			"index_analyzer" => "simple",
+			"search_analyzer" => "simple",
 			"payloads" => true,
 			'context' => [
 				'gender' =>
@@ -483,8 +482,8 @@ class DomainConfig extends AbstractConfig
 		],
 
 		'suggest_en' => ['type' => "completion",
-			"index_analyzer" => "english_index_analyzer",
-			"search_analyzer" => "search_analyzer",
+			"index_analyzer" => "simple",
+			"search_analyzer" => "simple",
 			"payloads" => true,
 			'context' => [
 				'gender' =>
@@ -497,8 +496,8 @@ class DomainConfig extends AbstractConfig
 		],
 
 		'suggest_fr' => ['type' => "completion",
-			"index_analyzer" => "english_index_analyzer",
-			"search_analyzer" => "search_analyzer",
+			"index_analyzer" => "simple",
+			"search_analyzer" => "simple",
 			"payloads" => true,
 			'context' => [
 				'gender' =>
@@ -509,8 +508,6 @@ class DomainConfig extends AbstractConfig
 					]
 			],
 		],
-
-
 
 		'suggest_id' => [
 			'type' => 'completion',

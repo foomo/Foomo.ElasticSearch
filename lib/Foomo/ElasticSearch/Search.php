@@ -4,7 +4,7 @@ namespace Foomo\ElasticSearch;
 
 use Elastica\Util;
 
-class Search extends \Foomo\ElasticSearch\Interfaces\Search
+class Search implements \Foomo\ElasticSearch\Interfaces\Search
 {
 	/**
 	 * @var \Foomo\ElasticSearch\DomainConfig
@@ -36,12 +36,7 @@ class Search extends \Foomo\ElasticSearch\Interfaces\Search
 
 	private static function find($query, $gender, $language)
 	{
-		$elasticaClient = new \Elastica\Client(
-			array(
-				'host' => self::$config->host,
-				'port' => self::$config->port
-			)
-		);
+		$elasticaClient = Index::getClient(self::$config);
 
 		$aliasName = self::$config->indexName . '-index';
 		$escapedQuery = Util::replaceBooleanWordsAndEscapeTerm($query);
@@ -56,7 +51,7 @@ class Search extends \Foomo\ElasticSearch\Interfaces\Search
 		$elasticaQueryString->setBoost(10);
 
 		$elasticaQueryString->setDefaultField('suggest');
-		$elasticaQueryString->setFields(array('product_name_' . $language, 'suggest', 'categories_' . $language));
+		$elasticaQueryString->setFields(array('name_' . $language, 'suggest', 'categories_' . $language));
 
 		$genderQuery = new \Elastica\Query\Prefix();
 		$genderQuery->setPrefix('gender', $gender);
@@ -87,7 +82,7 @@ class Search extends \Foomo\ElasticSearch\Interfaces\Search
 			$boolQuery->addShould($nameQuery);
 			$boolQuery->addShould($elasticaQueryString);
 			$boolQuery->addShould($categoriesQuery);
-			//$boolQuery->addMust($genderQuery);
+			$boolQuery->addMust($genderQuery);
 		}
 
 		// Create the actual search object with some data.
@@ -123,15 +118,10 @@ class Search extends \Foomo\ElasticSearch\Interfaces\Search
 	 *
 	 * @return string[]
 	 */
-	public static function getSuggestions($term, $gender, $language)
+	public static function getSuggestions($term, $gender, $language = 'de')
 	{
 
-		$elasticaClient = new \Elastica\Client(
-			array(
-				'host' => self::$config->esHost,
-				'port' => self::$config->esPort
-			)
-		);
+		$elasticaClient = Index::getClient(self::$config);
 
 		$aliasName = self::$config->indexName . '-index';
 		$elasticaIndex = $elasticaClient->getIndex($aliasName);
@@ -141,23 +131,15 @@ class Search extends \Foomo\ElasticSearch\Interfaces\Search
 			"suggest_name_" . $language => array(
 				"text" => $term,
 				"completion" => array(
-					"field" => "suggest_name_" . $language,
+					"field" => "suggest_" . $language,
 					'context' => array('gender' => $gender)
 				)
 			),
 
-			"suggest_category_" . $language => array(
+			"suggest_categories_" . $language => array(
 				"text" => $term,
 				"completion" => array(
-					"field" => "suggest_category_" . $language,
-					'context' => array('gender' => $gender)
-				)
-			),
-
-			"suggest" => array(
-				"text" => $term,
-				"completion" => array(
-					"field" => "suggest",
+					"field" => "suggest_categories_" . $language,
 					'context' => array('gender' => $gender)
 				)
 			),
@@ -180,19 +162,19 @@ class Search extends \Foomo\ElasticSearch\Interfaces\Search
 		);
 
 		$path = $elasticaIndex->getName() . '/_suggest';
-
 		$response = $elasticaClient->request($path, \Elastica\Request::GET, $query);
 		$responseArray = $response->getData();
 
 		$ret = array();
 
-		foreach (array("suggest_name_" . $language, "suggest_color_" . $language, "suggest_category_" . $language, 'suggest_id', 'suggest') as $key) {
+		foreach (array("suggest_" . $language, "suggest_name_" . $language, "suggest_color_" . $language, "suggest_categories_" . $language, 'suggest_id') as $key) {
 			if (isset($responseArray[$key])) {
 				foreach ($responseArray[$key] as $val) {
 
 					foreach ($val['options'] as $part) {
 						foreach ($part as $key1 => $arr) {
 							if ($key1 == 'text') {
+								print_r($key);
 								$ret[] = $arr;
 							}
 						}
@@ -240,4 +222,6 @@ class Search extends \Foomo\ElasticSearch\Interfaces\Search
 		}
 
 	}
+
+
 }
