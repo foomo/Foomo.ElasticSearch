@@ -34,7 +34,13 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 		return $ret;
 	}
 
-	private static function find($query, $gender, $language)
+	/**
+	 * @param string $query
+	 * @param string $gender
+	 * @param string $language
+	 * @return \Elastica\Result[]
+	 */
+	protected static function find($query, $gender, $language)
 	{
 		$elasticaClient = Index::getClient(self::$config);
 
@@ -92,7 +98,7 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 		//var_dump($elasticaQuery->toArray());
 
 		//Search on the index.
-		//$elasticaQuery->setMinScore(floatval(self::$config->minScore));
+		$elasticaQuery->setMinScore(floatval(self::$config->minScore));
 		$elasticaResultSet = $elasticaIndex->search($elasticaQuery);
 		$elasticaResults = $elasticaResultSet->getResults();
 
