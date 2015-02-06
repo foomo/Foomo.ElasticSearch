@@ -58,7 +58,7 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	 */
 	public function init(\Foomo\ElasticSearch\DomainConfig $config)
 	{
-			$this->config = $config;
+			$this->config = self::addExternalSynonyms($config);
 			$this->indexName1 = $config->indexName . '-1';
 			$this->indexName2 = $config->indexName . '-2';
 			$this->aliasName = $config->indexName . '-index';
@@ -224,5 +224,47 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 			)
 		);
 		return $client;
+	}
+
+	/**
+	 * get synonyms from file
+	 * @return string
+	 */
+	public static function getSynonyms() {
+		return file_get_contents(static::getSynonymsFile());
+	}
+
+	/**
+	 * store synonyms from file
+	 * @param string $synonyms
+	 * @return string
+	 */
+	public static function updateSynonyms($synonyms) {
+		return file_put_contents(static::getSynonymsFile(), $synonyms);
+	}
+
+	/**
+	 * @return string
+	 */
+	protected static function getSynonymsFile() {
+		return \Foomo\ElasticSearch\Module::getVarDir() .  DIRECTORY_SEPARATOR . 'synonyms.txt';
+	}
+
+	/**
+	 * @param \Foomo\ElasticSearch\DomainConfig $config
+	 * @return \Foomo\ElasticSearch\DomainConfig
+	 */
+	protected static function addExternalSynonyms(\Foomo\ElasticSearch\DomainConfig $config) {
+		$synonyms = self::getSynonyms();
+		if (isset($config->analysis['filter']['german_synonyms']['synonyms'])) {
+				$config->analysis['filter']['german_synonyms']['synonyms'] = array_merge(
+				$config->analysis['filter']['german_synonyms']['synonyms'],
+				explode(PHP_EOL, $synonyms)
+			);
+
+		} else {
+			$config->analysis['filter']['german_synonyms']['synonyms'] = explode(PHP_EOL, $synonyms);
+		}
+		return $config;
 	}
 }

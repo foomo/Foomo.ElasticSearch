@@ -26,7 +26,8 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 	public static function findDocuments($query, $gender, $language = 'de')
 	{
 		$ret = array();
-		$elasticaResults = self::find($query, $gender, $language);
+		$elasticaResults = static::find($query, $gender, $language);
+
 		foreach ($elasticaResults as $elasticaResult) {
 			$doc = $elasticaResult->getData();
 			$ret[] = $doc;
@@ -54,10 +55,10 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 		$elasticaQueryString = new \Elastica\Query\QueryString();
 		$elasticaQueryString->setDefaultOperator('OR');
 		$elasticaQueryString->setQuery($escapedQuery);
-		$elasticaQueryString->setBoost(10);
+		$elasticaQueryString->setBoost(1);
 
 		$elasticaQueryString->setDefaultField('suggest');
-		$elasticaQueryString->setFields(array('name_' . $language, 'suggest', 'categories_' . $language));
+		$elasticaQueryString->setFields(array('name_' . $language, 'suggest', 'categories_' . $language, 'color_' . $language));
 
 		$genderQuery = new \Elastica\Query\Prefix();
 		$genderQuery->setPrefix('gender', $gender);
@@ -65,17 +66,17 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 		$colorQuery = new \Elastica\Query\QueryString();
 		$colorQuery->setQuery($escapedQuery);
 		$colorQuery->setDefaultField('color_' . $language);
-		$colorQuery->setBoost(6);
+		$colorQuery->setBoost(1);
 
 		$nameQuery = new \Elastica\Query\QueryString();
 		$nameQuery->setQuery($escapedQuery);
 		$nameQuery->setDefaultField('name_' . $language);
-		$nameQuery->setBoost(10);
+		$nameQuery->setBoost(1);
 
 		$categoriesQuery = new \Elastica\Query\QueryString();
 		$categoriesQuery->setQuery($escapedQuery);
 		$categoriesQuery->setDefaultField('categories_' . $language);
-		$categoriesQuery->setBoost(30);
+		$categoriesQuery->setBoost(1);
 
 		$idQuery = new \Elastica\Query\Prefix();
 		$idQuery->setPrefix('id', strtolower($query));
@@ -180,7 +181,6 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 					foreach ($val['options'] as $part) {
 						foreach ($part as $key1 => $arr) {
 							if ($key1 == 'text') {
-								print_r($key);
 								$ret[] = $arr;
 							}
 						}
