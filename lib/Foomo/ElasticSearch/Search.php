@@ -27,7 +27,6 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 	{
 		$ret = array();
 		$elasticaResults = static::find($query, $gender, $language);
-
 		foreach ($elasticaResults as $elasticaResult) {
 			$doc = $elasticaResult->getData();
 			$ret[] = $doc;

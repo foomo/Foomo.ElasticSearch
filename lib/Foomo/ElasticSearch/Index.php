@@ -265,6 +265,16 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 		} else {
 			$config->analysis['filter']['german_synonyms']['synonyms'] = explode(PHP_EOL, $synonyms);
 		}
+
+		if (isset($config->analysis['filter']['english_synonyms']['synonyms'])) {
+			$config->analysis['filter']['english_synonyms']['synonyms'] = array_merge(
+				$config->analysis['filter']['english_synonyms']['synonyms'],
+				explode(PHP_EOL, $synonyms)
+			);
+
+		} else {
+			$config->analysis['filter']['english_synonyms']['synonyms'] = explode(PHP_EOL, $synonyms);
+		}
 		return $config;
 	}
 }
