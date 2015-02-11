@@ -118,8 +118,12 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	 */
 	protected function swapIndices()
 	{
-		$this->tempIndex->addAlias($this->aliasName, true);
-		$this->deleteSearchIndex($this->selectedIndexName);
+		if ($this->tempIndex && $this->tempIndex->exists()) {
+			$this->tempIndex->addAlias($this->aliasName, true);
+			$this->deleteSearchIndex($this->selectedIndexName);
+			$this->tempIndex->optimize();
+			$this->tempIndex->refresh();
+		}
 	}
 
 	/**
