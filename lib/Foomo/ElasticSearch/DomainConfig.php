@@ -214,7 +214,24 @@ class DomainConfig extends AbstractConfig
 				"expand" => 1,
 				'type' => 'synonym',
 				'synonyms' => ['test, test'],
-			]
+			],
+
+			"trigrams_filter" => [
+				"type" => "ngram",
+				"min_gram" => 3,
+				"max_gram" => 3
+			],
+
+			'german_decompound' => [
+				'type' => 'dictionary_decompounder',
+				'word_list_path' => 'german-common-nouns.txt'
+			],
+
+			'english_decompound' => [
+				'type' => 'dictionary_decompounder',
+				'word_list_path' => 'english-common-nouns.txt'
+			],
+
 		]
 	];
 	/**

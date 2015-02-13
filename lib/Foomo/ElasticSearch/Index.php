@@ -59,6 +59,8 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	public function init(\Foomo\ElasticSearch\DomainConfig $config)
 	{
 			$this->config = self::addExternalSynonyms($config);
+			$this->config = self::addExternalCommonWords($this->config);
+
 			$this->indexName1 = $config->indexName . '-1';
 			$this->indexName2 = $config->indexName . '-2';
 			$this->aliasName = $config->indexName . '-index';
@@ -230,6 +232,21 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 		return $client;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public static function getGermanCommonWordsFile() {
+		return \Foomo\Config::getModuleDir(\Foomo\ElasticSearch\Module::NAME) . DIRECTORY_SEPARATOR . 'elasticsearch-resources' . DIRECTORY_SEPARATOR . 'german-common-nouns.txt';
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function getEnglishCommonWordsFile() {
+		return \Foomo\Config::getModuleDir(\Foomo\ElasticSearch\Module::NAME) . DIRECTORY_SEPARATOR . 'elasticsearch-resources' . DIRECTORY_SEPARATOR . 'english-common-nouns.txt';
+	}
+
 	/**
 	 * get synonyms from file
 	 * @return string
@@ -253,6 +270,8 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	protected static function getSynonymsFile() {
 		return \Foomo\ElasticSearch\Module::getVarDir() .  DIRECTORY_SEPARATOR . 'synonyms.txt';
 	}
+
+
 
 	/**
 	 * @param \Foomo\ElasticSearch\DomainConfig $config
@@ -278,6 +297,21 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 
 		} else {
 			$config->analysis['filter']['english_synonyms']['synonyms'] = explode(PHP_EOL, $synonyms);
+		}
+		return $config;
+	}
+
+	/**
+	 * add common words file link to filter if exists
+	 * @param DomainConfig $config
+	 * @return DomainConfig
+	 */
+	protected function addExternalCommonWords($config) {
+		if (isset($config->analysis['filter']['german_decompound'])) {
+			$config->analysis['filter']['german_decompound']['word_list_path'] = self::getGermanCommonWordsFile();
+		}
+		if (isset($config->analysis['filter']['english_decompound'])) {
+			$config->analysis['filter']['english_decompound']['word_list_path'] = self::getEnglishCommonWordsFile();
 		}
 		return $config;
 	}
