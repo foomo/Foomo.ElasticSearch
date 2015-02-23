@@ -237,14 +237,14 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	 * @return string
 	 */
 	public static function getGermanCommonWordsFile() {
-		return \Foomo\Config::getModuleDir(\Foomo\ElasticSearch\Module::NAME) . DIRECTORY_SEPARATOR . 'elasticsearch-resources' . DIRECTORY_SEPARATOR . 'german-common-nouns.txt';
+		return \Foomo\Config::getModuleDir(\Foomo\ElasticSearch\Module::NAME) . DIRECTORY_SEPARATOR . 'es' . DIRECTORY_SEPARATOR . 'german-common-nouns.txt';
 	}
 
 	/**
 	 * @return string
 	 */
 	public static function getEnglishCommonWordsFile() {
-		return \Foomo\Config::getModuleDir(\Foomo\ElasticSearch\Module::NAME) . DIRECTORY_SEPARATOR . 'elasticsearch-resources' . DIRECTORY_SEPARATOR . 'english-common-nouns.txt';
+		return \Foomo\Config::getModuleDir(\Foomo\ElasticSearch\Module::NAME) . DIRECTORY_SEPARATOR . 'es' . DIRECTORY_SEPARATOR . 'english-common-nouns.txt';
 	}
 
 	/**
