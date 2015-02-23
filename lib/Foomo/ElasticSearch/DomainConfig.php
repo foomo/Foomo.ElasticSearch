@@ -224,12 +224,12 @@ class DomainConfig extends AbstractConfig
 
 			'german_decompound' => [
 				'type' => 'dictionary_decompounder',
-				'word_list_path' => 'german-common-nouns.txt'
+				'word_list_path' => ''
 			],
 
 			'english_decompound' => [
 				'type' => 'dictionary_decompounder',
-				'word_list_path' => 'english-common-nouns.txt'
+				'word_list_path' => ''
 			],
 
 		]

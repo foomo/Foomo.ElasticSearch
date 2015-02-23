@@ -304,14 +304,19 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	/**
 	 * add common words file link to filter if exists
 	 * @param DomainConfig $config
+	 * @param boolean $force
 	 * @return DomainConfig
 	 */
-	protected function addExternalCommonWords($config) {
+	protected function addExternalCommonWords($config, $force = false) {
 		if (isset($config->analysis['filter']['german_decompound'])) {
-			$config->analysis['filter']['german_decompound']['word_list_path'] = self::getGermanCommonWordsFile();
+			if (empty($config->analysis['filter']['german_decompound']['word_list_path']) || $force) {
+				$config->analysis['filter']['german_decompound']['word_list_path'] = self::getGermanCommonWordsFile();
+			}
 		}
 		if (isset($config->analysis['filter']['english_decompound'])) {
-			$config->analysis['filter']['english_decompound']['word_list_path'] = self::getEnglishCommonWordsFile();
+			if (empty($config->analysis['filter']['english_decompound']['word_list_path']) || $force) {
+				$config->analysis['filter']['english_decompound']['word_list_path'] = self::getEnglishCommonWordsFile();
+			}
 		}
 		return $config;
 	}
