@@ -281,8 +281,8 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 		$synonyms = self::getSynonyms();
 		if (isset($config->analysis['filter']['german_synonyms']['synonyms'])) {
 				$config->analysis['filter']['german_synonyms']['synonyms'] = array_merge(
-				$config->analysis['filter']['german_synonyms']['synonyms'],
-				explode(PHP_EOL, $synonyms)
+					$config->analysis['filter']['german_synonyms']['synonyms'],
+					explode(PHP_EOL, $synonyms)
 			);
 
 		} else {
