@@ -63,16 +63,7 @@ class DomainConfig extends AbstractConfig
 	 * @var int
 	 */
 	public $maxResults = 100;
-	/**
-	 * default index analyzer
-	 * @var string
-	 */
-	public $defaultIndexAnalyzer = 'german_index_analyzer';
-	/**
-	 * default search analyzer
-	 * @var string
-	 */
-	public $defaultSearchAnalyzer = 'search_analyzer';
+
 
 	public $analysis = [
 		'analyzer' => [
@@ -92,6 +83,7 @@ class DomainConfig extends AbstractConfig
 				'type' => 'custom',
 				'tokenizer' => 'icu_tokenizer',
 				'filter' => [
+					'lowercase',
 					'german_synonyms',
 					'german_keywords',
 					'word_delimiter',
@@ -224,12 +216,12 @@ class DomainConfig extends AbstractConfig
 
 			'german_decompound' => [
 				'type' => 'dictionary_decompounder',
-				'word_list_path' => ''
+				'word_list' => ''
 			],
 
 			'english_decompound' => [
 				'type' => 'dictionary_decompounder',
-				'word_list_path' => ''
+				'word_list' => ''
 			],
 
 		]
@@ -485,7 +477,7 @@ class DomainConfig extends AbstractConfig
 		],
 
 		'suggest_de' => ['type' => "completion",
-			"index_analyzer" => "simple",
+			"analyzer" => "simple",
 			"search_analyzer" => "simple",
 			"payloads" => true,
 			'context' => [
@@ -499,7 +491,7 @@ class DomainConfig extends AbstractConfig
 		],
 
 		'suggest_en' => ['type' => "completion",
-			"index_analyzer" => "simple",
+			"analyzer" => "simple",
 			"search_analyzer" => "simple",
 			"payloads" => true,
 			'context' => [
@@ -513,7 +505,7 @@ class DomainConfig extends AbstractConfig
 		],
 
 		'suggest_fr' => ['type' => "completion",
-			"index_analyzer" => "simple",
+			"analyzer" => "simple",
 			"search_analyzer" => "simple",
 			"payloads" => true,
 			'context' => [
@@ -528,7 +520,7 @@ class DomainConfig extends AbstractConfig
 
 		'suggest_id' => [
 			'type' => 'completion',
-			'index_analyzer' => 'whitespace',
+			'analyzer' => 'whitespace',
 			'search_analyzer' => 'whitespace',
 			'payloads' => true
 		],
@@ -538,9 +530,6 @@ class DomainConfig extends AbstractConfig
 			'include_in_all' => false
 		],
 
-		"_all" => [
-			'enabled' => true
-		]
 
 	);
 }
