@@ -246,6 +246,12 @@ class DomainConfig extends AbstractConfig
 	 */
 	public $fields = array(
 
+		'search_keywords' => [
+			'type' => 'string',
+			'include_in_all' => TRUE,
+			'analyzer' => 'german_index_analyzer'
+		],
+
 		'id' => [
 			'type' => 'string',
 			'include_in_all' => TRUE,
@@ -344,6 +350,8 @@ class DomainConfig extends AbstractConfig
 			'include_in_all' => TRUE,
 			'analyzer' => 'french_index_analyzer'
 		],
+
+
 
 		//******************************************************************************
 		// suggest fields
