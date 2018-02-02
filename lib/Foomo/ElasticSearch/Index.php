@@ -171,8 +171,8 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 		// Define mapping
 		$mapping = new \Elastica\Type\Mapping();
 		$mapping->setType($elasticaType);
-		$mapping->setParam('index_analyzer', $this->config->defaultIndexAnalyzer);
-		$mapping->setParam('search_analyzer', $this->config->defaultSearchAnalyzer);
+		//$mapping->setParam('index_analyzer', $this->config->defaultIndexAnalyzer);
+		//$mapping->setParam('search_analyzer', $this->config->defaultSearchAnalyzer);
 
 		// Set mapping
 		$mapping->setProperties($this->config->fields);
@@ -309,13 +309,13 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	 */
 	protected function addExternalCommonWords($config, $force = false) {
 		if (isset($config->analysis['filter']['german_decompound'])) {
-			if (empty($config->analysis['filter']['german_decompound']['word_list_path']) || $force) {
-				$config->analysis['filter']['german_decompound']['word_list_path'] = self::getGermanCommonWordsFile();
+			if (empty($config->analysis['filter']['german_decompound']['word_list']) || $force) {
+				$config->analysis['filter']['german_decompound']['word_list'] = explode(PHP_EOL, file_get_contents(self::getGermanCommonWordsFile()));
 			}
 		}
 		if (isset($config->analysis['filter']['english_decompound'])) {
-			if (empty($config->analysis['filter']['english_decompound']['word_list_path']) || $force) {
-				$config->analysis['filter']['english_decompound']['word_list_path'] = self::getEnglishCommonWordsFile();
+			if (empty($config->analysis['filter']['english_decompound']['word_list']) || $force) {
+				$config->analysis['filter']['english_decompound']['word_list'] = explode(PHP_EOL, file_get_contents(self::getEnglishCommonWordsFile()));
 			}
 		}
 		return $config;
