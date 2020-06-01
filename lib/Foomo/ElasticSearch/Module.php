@@ -35,8 +35,7 @@ class Module extends \Foomo\Modules\ModuleBase
 	 *
 	 */
 	const NAME = 'Foomo.ElasticSearch';
-
-	const VERSION = '2.4.0';
+	const VERSION = '6.5.2'; //version and submodule tag matched es version
 
 	//---------------------------------------------------------------------------------------------
 	// ~ Overriden static methods
@@ -67,15 +66,8 @@ class Module extends \Foomo\Modules\ModuleBase
 	public static function getResources()
 	{
 		return array(
-			// get a run mode independent folder var/<runMode>/test
-			// \Foomo\Modules\Resource\Fs::getVarResource(\Foomo\Modules\Resource\Fs::TYPE_FOLDER, 'test'),
-			// and a file in it
-			// \Foomo\Modules\Resource\Fs::getVarResource(\Foomo\Modules\Resource\Fs::TYPE_File, 'test' . DIRECTORY_SEPARATOR . 'someFile'),
-			// request a cache resource
-			// \Foomo\Modules\Resource\Fs::getCacheResource(\Foomo\Modules\Resource\Fs::TYPE_FOLDER, 'navigationLeaves'),
-			// a database configuration
-			//\Foomo\Modules\Resource\Config::getResource(self::NAME, 'Foomo.ElasticSearch.config'), // this is where the stuff is configured
-			\Foomo\Modules\Resource\ComposerPackage::getResource('ruflin/elastica', '3.2.3') //Elastica client
+			\Foomo\Modules\Resource\ComposerPackage::getResource('elasticsearch/elasticsearch', '^6.0'),
+			\Foomo\Modules\Resource\ComposerPackage::getResource('ruflin/elastica', '6.1.1') //Elastica client
 		);
 	}
 

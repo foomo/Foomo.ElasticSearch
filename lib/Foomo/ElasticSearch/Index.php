@@ -85,7 +85,7 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 				//default is first index but create it first
 				$this->index = $this->createIndexAndMapping($this->indexName1);
 				$this->deleteSearchIndex($this->indexName2);
-				$this->$tempIndex = $this->createIndexAndMapping($this->indexName2);
+				$this->tempIndex = $this->createIndexAndMapping($this->indexName2);
 				$this->selectedIndexName = $this->indexName1;
 			}
 			$this->index->addAlias($this->aliasName, true);
@@ -123,8 +123,8 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 		if ($this->tempIndex && $this->tempIndex->exists()) {
 			$this->tempIndex->addAlias($this->aliasName, true);
 			$this->deleteSearchIndex($this->selectedIndexName);
-			$this->tempIndex->optimize();
 			$this->tempIndex->refresh();
+
 		}
 	}
 
@@ -288,15 +288,16 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 		} else {
 			$config->analysis['filter']['german_synonyms']['synonyms'] = explode(PHP_EOL, $synonyms);
 		}
+		if (isset($config->analysis['filter']['english_synonyms'])) {
+			if (isset($config->analysis['filter']['english_synonyms']['synonyms'])) {
+				$config->analysis['filter']['english_synonyms']['synonyms'] = array_merge(
+					$config->analysis['filter']['english_synonyms']['synonyms'],
+					explode(PHP_EOL, $synonyms)
+				);
 
-		if (isset($config->analysis['filter']['english_synonyms']['synonyms'])) {
-			$config->analysis['filter']['english_synonyms']['synonyms'] = array_merge(
-				$config->analysis['filter']['english_synonyms']['synonyms'],
-				explode(PHP_EOL, $synonyms)
-			);
-
-		} else {
-			$config->analysis['filter']['english_synonyms']['synonyms'] = explode(PHP_EOL, $synonyms);
+			} else {
+				$config->analysis['filter']['english_synonyms']['synonyms'] = explode(PHP_EOL, $synonyms);
+			}
 		}
 		return $config;
 	}

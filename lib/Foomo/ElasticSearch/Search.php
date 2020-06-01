@@ -59,8 +59,6 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 		$elasticaQueryString->setDefaultField('suggest');
 		$elasticaQueryString->setFields(array('name_' . $language, 'suggest', 'categories_' . $language, 'color_' . $language));
 
-		$genderQuery = new \Elastica\Query\Prefix();
-		$genderQuery->setPrefix('gender', $gender);
 
 		$colorQuery = new \Elastica\Query\QueryString();
 		$colorQuery->setQuery($escapedQuery);
@@ -88,7 +86,7 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 			$boolQuery->addShould($nameQuery);
 			$boolQuery->addShould($elasticaQueryString);
 			$boolQuery->addShould($categoriesQuery);
-			$boolQuery->addMust($genderQuery);
+
 		}
 
 		// Create the actual search object with some data.
