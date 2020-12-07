@@ -2,7 +2,9 @@
 
 namespace Foomo\ElasticSearch;
 
+use Elastica\Query;
 use Elastica\Util;
+use Kennys\Search\Index;
 
 class Search implements \Foomo\ElasticSearch\Interfaces\Search
 {
@@ -122,108 +124,58 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 	 *
 	 * @return string[]
 	 */
-	public static function getSuggestions($term, $gender, $language = 'de')
+	public static function getSuggestions($term, $gender = 'female', $language = 'de')
 	{
 
-		$elasticaClient = Index::getClient(self::$config);
-
+		$elasticaClient = \OuiSet\Search\Index::getClient(self::$config);
 		$aliasName = self::$config->indexName . '-index';
 		$elasticaIndex = $elasticaClient->getIndex($aliasName);
+		$options = [];
 
-		$query = array(
-
-			"suggest_name_" . $language => array(
-				"text" => $term,
-				"completion" => array(
-					"field" => "suggest_" . $language,
-					'context' => array('gender' => $gender)
-				)
-			),
-
-			"suggest_categories_" . $language => array(
-				"text" => $term,
-				"completion" => array(
-					"field" => "suggest_categories_" . $language,
-					'context' => array('gender' => $gender)
-				)
-			),
-
-			"suggest_color_" . $language => array(
-				"text" => $term,
-				"completion" => array(
-					"field" => "suggest_color_" . $language,
-					'context' => array('gender' => $gender)
-				)
-			),
-
-			"suggest_id" => array(
-				"text" => $term,
-				"completion" => array(
-					"field" => "suggest_id"
-				)
-			),
-
-		);
-
-		$path = $elasticaIndex->getName() . '/_suggest';
-		$response = $elasticaClient->request($path, \Elastica\Request::GET, $query);
-		$responseArray = $response->getData();
-
-		$ret = array();
-
-		foreach (array("suggest_" . $language, "suggest_name_" . $language, "suggest_color_" . $language, "suggest_categories_" . $language, 'suggest_id') as $key) {
-			if (isset($responseArray[$key])) {
-				foreach ($responseArray[$key] as $val) {
-
-					foreach ($val['options'] as $part) {
-						foreach ($part as $key1 => $arr) {
-							if ($key1 == 'text') {
-								$ret[] = $arr;
-							}
-						}
-					}
-				}
-			}
-		}
-
-		//if no auto complete, use term search
-		/*if (count($ret) == 0) {
-			$suggest = new Suggest();
-
-			$suggest1 = new Term('suggest1', 'name_de');
-			$suggest1->setMinWordLength(2);
-			$suggest->addSuggestion($suggest1->setText($term));
-
-			$suggest2 = new Term('suggest2', 'id');
-			$suggest2->setMinWordLength(2);
-			$suggest->addSuggestion($suggest2->setText($term));
-
-			$result = $elasticaIndex->search($suggest);
-
-			$responseArray = $result->getSuggests();
-
-			foreach (array('suggest1', 'suggest2') as $key) {
-				if (isset($responseArray[$key])) {
-					foreach ($responseArray[$key] as $val) {
-						foreach ($val['options'] as $part) {
-							foreach ($part as $key1 => $arr) {
-								if ($key1 == 'text') {
-									$ret[] = $arr;
-								}
-							}
-						}
-					}
-				}
-			}
-
-		}
-		*/
 		if (self::isId($term)) {
-			return $ret;
+			$suggestFrom = ['suggest_id'];
 		} else {
+			$suggestFrom = ['suggest_categories_de', 'suggest_name_de', 'suggest_de', 'suggest_id', 'suggest_color_de'];
+		}
+
+		foreach ($suggestFrom as $suggestName) {
+			$suggest = new \Elastica\Suggest\Completion($suggestName, $suggestName);
+			if (!self::isId($term)) {
+				$suggest->setFuzzy(['fuzziness' => 1]);
+
+			}
+			$suggest->setPrefix($term);
+
+			$suggest->setSize(100);
+
+			$resultSet = $elasticaIndex->search(Query::create($suggest));
+
+			if ($resultSet->hasSuggests()) {
+				$suggests = $resultSet->getSuggests();
+				foreach ($suggests[$suggestName][0]['options'] as $option) {
+					$options[] = $option['text'];
+				}
+
+			}
+		}
+		$candidates = array_values(array_unique($options));
+
+		if (!self::isId($term)) {
+			return $candidates;
+		} else {
+			foreach ($candidates as $candidate) {
+				if (self::startsWith($candidate, $term)) {
+					$ret[] = $candidate;
+				}
+			}
 			return $ret;
 		}
 
+	}
+
+	private static function startsWith($haystack, $needle)
+	{
+		return $needle === "" || strpos($haystack, $needle) === 0;
 	}
 
 

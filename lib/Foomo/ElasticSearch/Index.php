@@ -100,9 +100,12 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 		//throw an exception if data not ok
 		$this->validateData($data);
 		// Add document to type
-		$type = $this->tempIndex->getType($this->config->dataType);
-		$document = new \Elastica\Document($data['id'], $data);
-		return $type->addDocument($document);
+		$doc = new \Elastica\Document(
+			$data['id'],
+			$data
+		);
+
+		return $this->tempIndex->addDocument($doc);
 	}
 
 	/**
@@ -152,11 +155,15 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	{
 		$index = self::getClient($this->config)->getIndex($indexName);
 		$data = [
-			'number_of_shards' => $this->config->numberOfShards,
-			'number_of_replicas' => $this->config->numberOfReplicas,
-			'analysis' => $this->config->analysis
+			'settings' => [
+					'number_of_shards' => $this->config->numberOfShards,
+					'number_of_replicas' => $this->config->numberOfReplicas,
+					'analysis' => $this->config->analysis
+				],
+
+
 		];
-		$index->create($data, $deleteIndex = true);
+		$index->create($data, ['recreate' => true]);
 		return $index;
 	}
 
@@ -165,20 +172,14 @@ class Index extends \Foomo\ElasticSearch\Interfaces\Index {
 	 * @param \Elastica\Index $index
 	 */
 	protected function createMapping($index) {
-		//Create a type
-		$elasticaType = $index->getType($this->config->dataType);
-
 		// Define mapping
-		$mapping = new \Elastica\Type\Mapping();
-		$mapping->setType($elasticaType);
-		//$mapping->setParam('index_analyzer', $this->config->defaultIndexAnalyzer);
-		//$mapping->setParam('search_analyzer', $this->config->defaultSearchAnalyzer);
+		$mapping = new \Elastica\Mapping();
 
 		// Set mapping
 		$mapping->setProperties($this->config->fields);
 
 		// Send mapping to type
-		$mapping->send();
+		$mapping->send($index);
 	}
 
 	/**

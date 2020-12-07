@@ -35,7 +35,7 @@ class Module extends \Foomo\Modules\ModuleBase
 	 *
 	 */
 	const NAME = 'Foomo.ElasticSearch';
-	const VERSION = '6.5.2'; //version and submodule tag matched es version
+	const VERSION = '7.10.0'; //version and submodule tag matched es version
 
 	//---------------------------------------------------------------------------------------------
 	// ~ Overriden static methods
@@ -66,8 +66,8 @@ class Module extends \Foomo\Modules\ModuleBase
 	public static function getResources()
 	{
 		return array(
-			\Foomo\Modules\Resource\ComposerPackage::getResource('elasticsearch/elasticsearch', '^6.0'),
-			\Foomo\Modules\Resource\ComposerPackage::getResource('ruflin/elastica', '6.1.1') //Elastica client
+			\Foomo\Modules\Resource\ComposerPackage::getResource('elasticsearch/elasticsearch', '7.10.0'),
+			\Foomo\Modules\Resource\ComposerPackage::getResource('ruflin/elastica', '7.0.0') //Elastica client
 		);
 	}
 
