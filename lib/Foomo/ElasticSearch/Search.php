@@ -173,7 +173,7 @@ class Search implements \Foomo\ElasticSearch\Interfaces\Search
 
 	}
 
-	private static function startsWith($haystack, $needle)
+	protected static function startsWith($haystack, $needle)
 	{
 		return $needle === "" || strpos($haystack, $needle) === 0;
 	}
